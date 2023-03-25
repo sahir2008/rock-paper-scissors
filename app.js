@@ -43,31 +43,94 @@ function playRound(playerSelection, computerSelection) {
   }
 }
 
-function game() {
-  let roundNum = 0;
-  let playerScore = 0;
-  let computerScore = 0;
+const rockBtn = document.createElement("button");
+const paperBtn = document.createElement("button");
+const sicssorsBtn = document.createElement("button");
+const container = document.createElement("div");
+rockBtn.innerText = "Rock";
+paperBtn.innerText = "Paper";
+sicssorsBtn.innerText = "Sicssors";
+rockBtn.setAttribute("id", "rock");
+paperBtn.setAttribute("id", "paper");
+sicssorsBtn.setAttribute("id", "scissors");
+container.appendChild(rockBtn);
+container.appendChild(paperBtn);
+container.appendChild(sicssorsBtn);
+document.body.appendChild(container);
 
-  for (let i = 1; i <= 5; i++) {
-    let playerChoice = prompt(
-      "PLease Enter 'rock' or 'paper or 'scissors':"
-    ).toLocaleLowerCase();
-    roundNum++;
-    if (playRound(playerChoice, getComputerChoice()).includes("Win")) {
+
+
+const buttons = document.querySelectorAll("button");
+const resultContainer = document.createElement("div");
+const result = document.createElement("h2");
+const playerSelection = document.createElement("p");
+const computerSelection = document.createElement("p");
+
+let roundNum = 0;
+let playerScore = 0;
+let computerScore = 0;
+
+const pScore = document.createElement("p");
+const cScore = document.createElement("p");
+const round = document.createElement("p");
+cScore.innerText = `Computer Score: ${computerScore}`;
+pScore.innerText = `Player Score: ${playerScore}`;
+round.innerText = `Round : ${roundNum}`;
+round.style.color = "red";
+cScore.style.color = "blue";
+pScore.style.color = "blue";
+container.appendChild(round);
+container.appendChild(pScore);
+container.appendChild(cScore);
+
+buttons.forEach((button) => {
+  button.addEventListener("click", (e) => {
+    let pcChoice = getComputerChoice();
+    let playerChoice = e.target.id;
+    let resultMsg = playRound(playerChoice, pcChoice);
+    playerSelection.innerText = `Player Choose : ${playerChoice}`;
+    computerSelection.innerText = `Computer Choose: ${pcChoice}`;
+    result.innerText = resultMsg;
+    resultContainer.appendChild(result);
+    resultContainer.appendChild(playerSelection);
+    resultContainer.appendChild(computerSelection);
+    container.appendChild(resultContainer);
+
+    if (resultMsg.includes("Win")) {
       ++playerScore;
-    } else if (playRound(playerChoice, getComputerChoice()).includes("Lose!")) {
+      pScore.innerText = `Player Score: ${playerScore}`;
+    } else if (resultMsg.includes("Lose!")) {
       ++computerScore;
+      cScore.innerText = `Computer Score: ${computerScore}`;
     }
+    roundNum++;
+    round.innerText = `Round : ${roundNum}`;
+    if (playerScore === 5) {
+      const playerWins = document.createElement("h1");
+      playerWins.innerText = "Player is The Winner Winner Chicken Dinner";
+      playerWins.style.color = "green";
+      container.appendChild(playerWins);
+      clearResult(playerWins);
+    } else if (computerScore === 5) {
+      const copWins = document.createElement("h1");
+      copWins.innerText = "Computer is the winner!";
+      copWins.style.color = "red";
+      container.appendChild(copWins);
+      clearResult(copWins);
+    }
+  });
+});
 
-    console.log("player Score is : " + playerScore);
-    console.log("COP Score is : " + computerScore);
-  }
-  if (playerScore > computerScore) {
-    console.log("Player is The Winner Winner Chicken Dinner");
-  } else if (playerScore < computerScore) {
-    console.log("Computer is the winner!");
-  } else {
-    console.log("Its a Draw game");
-  }
+// Helper Function
+function clearResult(playerOrCop) {
+  setTimeout(() => {
+    playerScore = 0;
+    computerScore = 0;
+    roundNum = 0;
+    container.removeChild(playerOrCop);
+    container.removeChild(resultContainer);
+    pScore.innerText = `Player Score: ${playerScore}`;
+    cScore.innerText = `Computer Score: ${computerScore}`;
+    round.innerText = `Round : ${roundNum}`;
+  }, 2000);
 }
-game();
